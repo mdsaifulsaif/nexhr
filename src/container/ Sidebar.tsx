@@ -1,5 +1,6 @@
 // components/Sidebar.tsx
 "use client";
+import LogoutButton from '@/components/Logout';
 import React from 'react';
 import { 
   RiDashboardLine, 
@@ -24,11 +25,12 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }: SidebarProps) =
   const menuItems = [
     { title: 'Dashboard', icon: <RiDashboardLine />, active: true },
     { type: 'label', label: 'APPS & PAGES' },
-    { title: 'Chat', icon: <RiChat3Line /> },
-    { title: 'Calendar', icon: <RiCalendarLine /> },
-    { title: 'Email', icon: <RiMailLine /> },
-    { title: 'Pages', icon: <RiLayoutGridLine /> },
-    { title: 'Authentication', icon: <RiShieldUserLine /> },
+    { title: 'Departments', icon: <RiChat3Line /> },
+    { title: 'Office', icon: <RiCalendarLine /> },
+    { title: 'Employee', icon: <RiMailLine /> },
+    { title: 'Attendace', icon: <RiLayoutGridLine /> },
+    { title: 'Notice', icon: <RiShieldUserLine /> },
+    { title: 'Leave Request', icon: <RiShieldUserLine /> },
     { type: 'label', label: 'COMPONENTS' },
     { title: 'UI Components', icon: <RiStackLine /> },
   ];
@@ -115,6 +117,9 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }: SidebarProps) =
               <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 cursor-pointer transition-all">
                 <RiSettings4Line size={20} />
                 <span className="text-sm font-semibold">Settings</span>
+              </div>
+              <div>
+                <LogoutButton />
               </div>
             </div>
           )}

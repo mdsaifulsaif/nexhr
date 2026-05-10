@@ -14,35 +14,36 @@ const handler = NextAuth({
         const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/login`;
 
         try {
-          const res = await fetch(apiUrl, {
-            method: "POST",
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
-            headers: { "Content-Type": "application/json" },
-          });
+         
+            const res = await fetch(apiUrl, {
+              method: "POST",
+              body: JSON.stringify({
+                email: credentials?.email,
+                password: credentials?.password,
+              }),
+              headers: { "Content-Type": "application/json" },
+            });
 
-          const responseData = await res.json();
+            const responseData = await res.json();
 
-          // Console-e check korar jonno
-          console.log("Full Backend Response:", responseData);
+            // Console-e check korar jonno
+            console.log("Full Backend Response:", responseData);
 
-          // Apnar dewa structure onujayi: data.success check korbo
-          if (res.ok && responseData.success === true) {
-            const { user, accessToken } = responseData.data; // data object theke user o token nilam
+            // Apnar dewa structure onujayi: data.success check korbo
+            if (res.ok && responseData.success === true) {
+              const { user, accessToken } = responseData.data; // data object theke user o token nilam
 
-            return {
-              id: user.id,
-              name: user.name,
-              email: user.email,
-              role: user.role, // Extra info jodi dorkar hoy
-              employee_id: user.employee_id,
-              accessToken: accessToken, // Eita session-e pass hobe
-            };
-          }
+              return {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role, // Extra info jodi dorkar hoy
+                employee_id: user.employee_id,
+                accessToken: accessToken, // Eita session-e pass hobe
+              };
+            }
 
-          return null;
+            return null;
         } catch (error) {
           console.error("Login Fetch Error:", error);
           return null;
