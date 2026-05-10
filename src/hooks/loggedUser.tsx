@@ -7,8 +7,9 @@ export const useLoggedUser = () => {
 
   return {
     user: session?.user,
-    accessToken: (session as any)?.accessToken, // Type error fix
+    accessToken: (session as any)?.accessToken,
     status,
+    employee_id: (session?.user as any)?.employee_id,
     isLoading: status === "loading",
     isAuthenticated: status === "authenticated",
   };

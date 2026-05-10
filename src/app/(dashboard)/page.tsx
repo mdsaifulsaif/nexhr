@@ -43,25 +43,29 @@ const ApplicantRow = ({ app }: any) => (
 // --- 2. Main Dashboard Component ---
 
 export default function DashboardPage() {
-  const { user, accessToken, isAuthenticated, isLoading } = useLoggedUser();
+  
 
   const recentApplicants = [
     { name: 'Sophia Hall', role: 'Front-End Developer', status: 'Pending', img: 'https://i.pravatar.cc/150?u=a' },
     { name: 'Emma Smith', role: 'Back-End Developer', status: 'Approved', img: 'https://i.pravatar.cc/150?u=b' },
   ];
 
-  // 🔴 Console log ekhon kaj korbe
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      console.log("✅ Logged-in User Data:", user);
-      console.log("🔑 Access Token:", accessToken);
-    }
-  }, [user, isAuthenticated, accessToken]);
+  //  Console log ekhon kaj korbe
+const { user, accessToken, isAuthenticated, isLoading, employee_id } = useLoggedUser();
+
+useEffect(() => {
+  if (isAuthenticated && user) {
+    console.log("✅ Logged-in User Data:", user);
+    console.log("🔑 Access Token:", accessToken);
+    // Eikhane 'employee_id' bebohar kora holo, tai error thakbe na
+    console.log("🆔 Employee ID:", employee_id); 
+  }
+}, [user, isAuthenticated, accessToken, employee_id]);
 
   if (isLoading) return <div className="p-20 text-center font-bold text-primary animate-pulse">Loading Dashboard...</div>;
 
   return (
-    <div className="main-container space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className=" space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       
       {/* Header Section */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">

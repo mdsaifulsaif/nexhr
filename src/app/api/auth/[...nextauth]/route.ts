@@ -50,15 +50,38 @@ const handler = NextAuth({
       },
     }),
   ],
+  //   callbacks: {
+  //     async jwt({ token, user }) {
+  //       if (user) {
+  //         token.accessToken = (user as any).accessToken;
+  //       }
+  //       return token;
+  //     },
+  //     async session({ session, token }) {
+  //       (session as any).accessToken = token.accessToken;
+  //       return session;
+  //     },
+  //   },
+  // app/api/auth/[...nextauth]/route.ts
+
   callbacks: {
     async jwt({ token, user }) {
+      // Prothombari login korar somoy 'user' object-e backend-er data thake
       if (user) {
         token.accessToken = (user as any).accessToken;
+        token.role = (user as any).role;
+        // Backend response-er 'data.user.employee_id' eikhane dhora hocche
+        token.employee_id = (user as any).employee_id;
       }
       return token;
     },
     async session({ session, token }) {
-      (session as any).accessToken = token.accessToken;
+      // JWT token theke data niye session-er user object-e dewa hocche
+      if (session.user) {
+        (session as any).accessToken = token.accessToken;
+        (session.user as any).role = token.role;
+        (session.user as any).employee_id = token.employee_id; // Frontend ekhon eita pabe
+      }
       return session;
     },
   },
