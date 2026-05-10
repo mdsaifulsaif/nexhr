@@ -1,26 +1,69 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Colors */
+  --color-primary: #FF5A1F;
+  --color-bg-light: #F8F9FA;
+  --color-slate-800: #1e293b;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+
+  /* Shadows & Radius */
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  
+  --shadow-dashboard: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* Custom Base Styles */
+@layer base {
+  body {
+    @apply bg-bg-light text-slate-800 antialiased;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Responsive Typography System */
+  h1 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-black tracking-tight;
+  }
+
+  h2 {
+    @apply text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight;
+  }
+
+  h3 {
+    @apply text-lg md:text-xl font-bold;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Utility Classes for Dashboard */
+@layer utilities {
+  /* Title Text Style */
+  .text-title {
+    @apply text-slate-800 font-bold leading-tight;
+  }
+
+  /* Subtitle/Secondary Text */
+  .text-subtitle {
+    @apply text-slate-400 text-xs md:text-sm font-medium;
+  }
+
+  /* Responsive Card Layout */
+  .dashboard-card {
+    @apply bg-white p-4 md:p-6 rounded-2xl border border-slate-100 shadow-dashboard transition-all duration-300;
+  }
+
+  /* Responsive Container */
+  .main-container {
+    @apply max-w-[1600px] mx-auto w-full px-4 md:px-8 py-6;
+  }
+
+  /* Hide Scrollbar but keep functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
