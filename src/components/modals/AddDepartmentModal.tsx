@@ -1,88 +1,78 @@
 "use client";
-import { useState } from "react";
 import { useModalStore } from "@/store/useModalStore";
+import { useState } from "react";
+import { RiCloseLine } from "react-icons/ri";
 import { departmentService } from "@/services/api-service";
-
+import toast from "react-hot-toast";
 
 export const AddDepartmentModal = () => {
+  // Get state and actions from the store
   const { isOpen, onClose, modalType, data } = useModalStore();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Check if this specific modal should be open
   const isModalOpen = isOpen && modalType === "addDepartment";
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (!name) return;
-
-//     try {
-//       setLoading(true);
-//       // ব্যাকএন্ডে শুধু { name: name } অবজেক্ট যাচ্ছে
-//       const res = await departmentService.createDepartment({ name });
-
-//       if (res.success) {
-//         setName(""); 
-//         data?.onSuccess?.(); // পেজের fetchDepartments কল হবে
-//         onClose();
-//       }
-//     } catch (error) {
-//       console.error("Save Error:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // ১. নাম খালি থাকলে বা শুধু স্পেস থাকলে আটকানো
-    if (!name || name.trim() === "") return;
-
-    try {
-      setLoading(true);
-      
-      // ২. এপিআই কল
-      const res = await departmentService.createDepartment({ name: name.trim() });
-
-      if (res.success) {
-        // ৩. সাকসেস হলে সব রিসেট এবং রিফেচ
-        setName(""); 
-        data?.onSuccess?.(); // এটি টেবিলের fetchDepartments ফাংশনটি কল করবে
-        onClose();
-        // আপনি চাইলে এখানে একটি success toast দিতে পারেন (যেমন: react-hot-toast)
-      }
-    } catch (error: any) {
-      // ৪. সার্ভার থেকে আসা এরর মেসেজ দেখানো (যদি থাকে)
-      const errorMsg = error.response?.data?.message || "Something went wrong!";
-      console.error("Save Error:", errorMsg);
-      // alert(errorMsg); // বা কোনো টোস্ট মেসেজ
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (!isModalOpen) return null;
 
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!name.trim()) return;
+
+  try {
+    setLoading(true);
+    const res = await departmentService.createDepartment({ name: name.trim() });
+
+    // এপিআই যদি সাকসেস হয়
+    if (res.success) {
+      // এপিআই থেকে পাঠানো মেসেজ দেখাবে (যেমন: "Department Created successfully")
+      toast.success(res.message || "Success!"); 
+      
+      setName("");
+      data?.onSuccess?.(); 
+      onClose();
+    }
+  } catch (error: any) {
+    
+    const errorMsg = error.response?.data?.message || "Something went wrong!";
+    toast.error(errorMsg);
+    console.error("Save Error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-bold">Add New Department</h2>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+      {/* Backdrop Overlay */}
+      <div 
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" 
+        onClick={onClose} 
+      />
+
+      {/* Modal Content */}
+      <div className="relative bg-white w-full max-w-md rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div className="flex items-center justify-between p-6 border-b border-slate-100">
+          <h3 className="text-xl font-bold text-slate-800">Add New Department</h3>
+          <button onClick={onClose} className="p-2 hover:bg-slate-50 rounded-full text-slate-400">
+            <RiCloseLine size={24} />
+          </button>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="p-6">
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-slate-700 mb-2">
               Department Name
             </label>
             <input
               autoFocus
               type="text"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 outline-none focus:border-primary transition-all text-sm"
+              placeholder="e.g. Marketing"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition"
-              placeholder="e.g. Frontend Developer"
-              required
+              disabled={loading}
             />
           </div>
 
@@ -90,16 +80,16 @@ const handleSubmit = async (e: React.FormEvent) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+              className="px-6 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-50 transition-all text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-indigo-300 transition"
+              className="px-6 py-2.5 rounded-xl font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:opacity-90 disabled:opacity-50 transition-all text-sm"
             >
-              {loading ? "Saving..." : "Save"}
+              {loading ? "Saving..." : "Save Department"}
             </button>
           </div>
         </form>

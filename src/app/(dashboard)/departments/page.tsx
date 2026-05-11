@@ -7,6 +7,7 @@ import { useModalStore } from "@/store/useModalStore";
 import { departmentService } from "@/services/api-service";
 import { RiEditLine, RiDeleteBin7Line, RiAddLine } from 'react-icons/ri';
 
+
 const DepartmentPage = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
