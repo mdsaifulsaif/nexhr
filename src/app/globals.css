@@ -67,3 +67,54 @@
     scrollbar-width: none;
   }
 }
+
+/* --- Table Specific Styles --- */
+/* --- Table Components --- */
+@layer components {
+  .table-wrapper {
+    /* সরাসরি ইউটিলিটি ব্যবহার না করে প্রপার্টি দেওয়া হয়েছে সেফটির জন্য */
+    @apply bg-white p-4 md:p-6 rounded-2xl border border-slate-100 shadow-dashboard overflow-hidden;
+  }
+
+  .gxon-table {
+    @apply w-full text-left border-separate border-spacing-0;
+  }
+
+  .gxon-table thead th {
+    @apply py-4 px-4 text-slate-500 text-[11px] md:text-xs font-bold uppercase tracking-widest border-b border-slate-100 bg-slate-50/30;
+  }
+
+  .gxon-table tbody tr {
+    @apply transition-colors duration-200;
+  }
+
+  .gxon-table tbody tr:hover {
+    @apply bg-slate-50/50;
+  }
+
+  .gxon-table td {
+    @apply py-4 px-4 text-sm align-middle border-b border-slate-50;
+  }
+
+  /* User Info Cell */
+  .user-info-cell {
+    @apply flex items-center gap-3;
+  }
+
+  .user-info-cell img {
+    @apply w-9 h-9 rounded-full object-cover ring-2 ring-slate-50;
+  }
+
+  /* Pagination Buttons */
+  .pg-btn {
+    @apply w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-all;
+  }
+
+  .pg-btn-active {
+    @apply bg-primary text-white shadow-lg shadow-primary/20;
+  }
+
+  .pg-btn-normal {
+    @apply text-slate-500 hover:bg-slate-100;
+  }
+}
