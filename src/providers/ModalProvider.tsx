@@ -2,10 +2,11 @@
 import { useModalStore } from "@/store/useModalStore";
 import { AddDepartmentModal } from "@/components/modals/AddDepartmentModal";
 import { useEffect, useState } from "react";
+import { EmployeeModal } from "@/components/modals/EmployeeModal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
-  // স্টোর থেকে ডাটা নিন
+
   const { isOpen, modalType } = useModalStore();
 
   useEffect(() => {
@@ -16,7 +17,7 @@ export const ModalProvider = () => {
 
   return (
     <>
-      {/* যখন isOpen true এবং টাইপ addDepartment হবে তখনই মোডাল দেখাবে */}
+     <EmployeeModal />
       {isOpen && modalType === "addDepartment" && <AddDepartmentModal />}
     </>
   );

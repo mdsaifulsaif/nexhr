@@ -26,7 +26,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }: SidebarProps) =
   const pathname = usePathname();
 
   const menuItems = [
-    { title: 'Dashboard', icon: <RiDashboardLine />, href: '/' }, // আপনার রিকোয়ারমেন্ট অনুযায়ী রুট পাথ
+    { title: 'Dashboard', icon: <RiDashboardLine />, href: '/' }, // 
     { type: 'label', label: 'APPS & PAGES' },
     { title: 'Departments', icon: <RiChat3Line />, href: '/departments' },
     { title: 'Office', icon: <RiCalendarLine />, href: '/office' },
@@ -58,11 +58,11 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }: SidebarProps) =
         <div className="h-16 flex items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-primary rounded-xl flex-shrink-0 flex items-center justify-center text-white font-black shadow-lg shadow-primary/20 transition-transform hover:scale-105 cursor-pointer">
-              G
+              N
             </div>
             {!isCollapsed && (
               <h1 className="text-xl font-bold text-slate-800 tracking-tight transition-opacity duration-300">
-                GXON
+                NexHR
               </h1>
             )}
           </div>
