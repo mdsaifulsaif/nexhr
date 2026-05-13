@@ -87,3 +87,30 @@ export const employeeService = {
     }
   },
 };
+
+
+export const attendanceService = {
+  // এডমিনের জন্য সব অ্যাটেনডেন্স ডাটা নিয়ে আসা
+  getAllAttendanceForAdmin: async (params: {
+    page?: number;
+    limit?: number;
+    searchTerm?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const response = await apiClient.get("/attendance/admin/all-attendance", { params });
+    return response.data;
+  },
+
+  // নির্দিষ্ট কোনো অ্যাটেনডেন্স ডিটেইলস দেখার জন্য (যদি প্রয়োজন হয়)
+  getAttendanceById: async (id: string) => {
+    const response = await apiClient.get(`/attendance/${id}`);
+    return response.data;
+  },
+
+  // স্ট্যাটাস আপডেট করার জন্য (যেমন: Manual Present)
+  updateAttendanceStatus: async (id: string, status: string) => {
+    const response = await apiClient.patch(`/attendance/status/${id}`, { status });
+    return response.data;
+  },
+};
