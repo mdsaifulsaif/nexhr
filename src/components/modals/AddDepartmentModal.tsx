@@ -24,9 +24,9 @@ export const AddDepartmentModal = () => {
     setLoading(true);
     const res = await departmentService.createDepartment({ name: name.trim() });
 
-    // এপিআই যদি সাকসেস হয়
+    
     if (res.success) {
-      // এপিআই থেকে পাঠানো মেসেজ দেখাবে (যেমন: "Department Created successfully")
+ 
       toast.success(res.message || "Success!"); 
       
       setName("");

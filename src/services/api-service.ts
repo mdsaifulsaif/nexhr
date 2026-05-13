@@ -29,3 +29,25 @@ export const departmentService = {
     return response.data;
   }
 };
+
+
+// office setup related apis
+export const officeService = {
+
+  getOffice: async () => {
+    const response = await apiClient.get("/office/all");
+    return response.data;
+  },
+  
+
+  createOffice: async (data: any) => {
+    const response = await apiClient.post("/office/create", data);
+    return response.data;
+  },
+  
+
+  updateOffice: async (id: number | string, data: any) => {
+    const response = await apiClient.patch(`/office/${id}`, data); 
+    return response.data;
+  }
+};
