@@ -114,3 +114,49 @@ export const attendanceService = {
     return response.data;
   },
 };
+
+
+
+
+
+
+
+// ইউনিক অবজেক্ট নেম দিয়ে সবগুলো এপিআই একসাথে র্যাপ করা হলো
+export const dashboardAttendanceService = {
+  // ১. Punch Check-In (Attendance Add)
+  checkIn: async (
+    data: {
+      employee_id: string;
+      lat: number;
+      lon: number;
+      office_id: number;
+    },
+    token?: string
+  ) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const response = await apiClient.post("/attendance", data, config);
+    return response.data;
+  },
+
+  // ২. Punch Check-Out (Attendance Update)
+  checkOut: async (
+    data: {
+      employee_id: string;
+      lat: number;
+      lon: number;
+      office_id: number;
+    },
+    token?: string
+  ) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const response = await apiClient.patch("/attendance/checkout", data, config);
+    return response.data;
+  },
+
+  // ৩. Employee Attendance History Fetch (টেবিলের ডাটা আনা)
+  getAttendanceHistory: async (employeeId: string, token?: string) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const response = await apiClient.get(`/attendance/${employeeId}`, config);
+    return response.data;
+  },
+};

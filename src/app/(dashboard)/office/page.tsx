@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { RiMapPin2Line, RiTimeLine, RiSaveLine, RiFocus2Line } from "react-icons/ri";
+import { RiMapPin2Line, RiTimeLine, RiSaveLine, RiFocus2Line, RiAlertLine } from "react-icons/ri";
 import toast from "react-hot-toast";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-
 
 import { officeService } from "@/services/api-service";
 
@@ -13,6 +12,7 @@ const OfficeSetupPage = () => {
   const [updating, setUpdating] = useState(false);
   const [officeId, setOfficeId] = useState<number | null>(null);
   
+  // 🎯 ১. স্টেটে max_late_minutes এবং max_absent_minutes যোগ করা হলো
   const [formData, setFormData] = useState({
     name: "",
     latitude: 23.810332,
@@ -20,18 +20,20 @@ const OfficeSetupPage = () => {
     radius_meters: 200,
     start_time: "09:00:00",
     end_time: "18:00:00",
+    max_late_minutes: 120,   // ডিফল্ট ২ ঘণ্টা
+    max_absent_minutes: 240, // ডিফল্ট ৪ ঘণ্টা
   });
 
- 
   const fetchOfficeData = async () => {
     try {
       setLoading(true);
       const res = await officeService.getOffice();
       
- 
       if (res.success && res.data && res.data.length > 0) {
         const office = res.data[0]; 
         setOfficeId(office.id);
+        
+        // 🎯 ২. এপিআই রেসপন্স থেকে নতুন ডেটা সেভ করা হচ্ছে
         setFormData({
           name: office.name,
           latitude: office.latitude,
@@ -39,6 +41,8 @@ const OfficeSetupPage = () => {
           radius_meters: office.radius_meters,
           start_time: office.start_time,
           end_time: office.end_time,
+          max_late_minutes: office.max_late_minutes ?? 120,
+          max_absent_minutes: office.max_absent_minutes ?? 240,
         });
       }
     } catch (error) {
@@ -51,7 +55,6 @@ const OfficeSetupPage = () => {
   useEffect(() => {
     fetchOfficeData();
   }, []);
-
 
   const handleGeoLocation = () => {
     if (!navigator.geolocation) {
@@ -70,17 +73,14 @@ const OfficeSetupPage = () => {
     });
   };
 
-  
   const handleSubmit = async () => {
     try {
       setUpdating(true);
       let res;
 
       if (officeId) {
-       
         res = await officeService.updateOffice(officeId, formData);
       } else {
-      
         res = await officeService.createOffice(formData);
       }
 
@@ -100,8 +100,8 @@ const OfficeSetupPage = () => {
       <div className="main-container">
         <Skeleton height={40} width={250} className="mb-6" />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Skeleton height={350} borderRadius={16} />
-          <Skeleton height={350} borderRadius={16} />
+          <Skeleton height={420} borderRadius={16} />
+          <Skeleton height={420} borderRadius={16} />
         </div>
       </div>
     );
@@ -157,7 +157,6 @@ const OfficeSetupPage = () => {
               </div>
             </div>
 
-            {/* লোকেশন বাটন */}
             <button 
               type="button"
               onClick={handleGeoLocation}
@@ -178,39 +177,71 @@ const OfficeSetupPage = () => {
           </div>
         </div>
 
-        {/* Office Hours Card */}
+        {/* Working Hours & Late/Absent Policy Card */}
         <div className="dashboard-card">
           <div className="flex items-center gap-2 mb-6 text-primary">
             <RiTimeLine size={22} />
-            <h3 className="font-bold text-slate-800">Working Hours</h3>
+            <h3 className="font-bold text-slate-800">Working Hours & Policy</h3>
           </div>
 
-          <div className="space-y-6">
-            <div>
-              <label className="text-subtitle mb-2 block font-semibold">Shift Start Time</label>
-              <input 
-                type="time"
-                step="1"
-                className="w-full px-4 py-3 rounded-xl border border-slate-100 outline-none focus:border-primary text-sm font-bold"
-                value={formData.start_time}
-                onChange={(e) => setFormData({...formData, start_time: e.target.value})}
-              />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-subtitle mb-2 block font-semibold">Shift Start Time</label>
+                <input 
+                  type="time"
+                  step="1"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-100 outline-none focus:border-primary text-sm font-bold"
+                  value={formData.start_time}
+                  onChange={(e) => setFormData({...formData, start_time: e.target.value})}
+                />
+              </div>
+
+              <div>
+                <label className="text-subtitle mb-2 block font-semibold">Shift End Time</label>
+                <input 
+                  type="time"
+                  step="1"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-100 outline-none focus:border-primary text-sm font-bold"
+                  value={formData.end_time}
+                  onChange={(e) => setFormData({...formData, end_time: e.target.value})}
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="text-subtitle mb-2 block font-semibold">Shift End Time</label>
-              <input 
-                type="time"
-                step="1"
-                className="w-full px-4 py-3 rounded-xl border border-slate-100 outline-none focus:border-primary text-sm font-bold"
-                value={formData.end_time}
-                onChange={(e) => setFormData({...formData, end_time: e.target.value})}
-              />
+            {/* 🎯 ৩. নতুন ডাইনামিক পলিসি ইনপুট ফিল্ড দুটি এখানে যোগ করা হলো */}
+            <div className="grid grid-cols-2 gap-4 pt-2">
+              <div>
+                <label className="text-subtitle mb-1 block font-semibold flex items-center gap-1">
+                  Half-Day Limit <span className="text-[10px] text-slate-400 font-normal">(Minutes)</span>
+                </label>
+                <input 
+                  type="number"
+                  placeholder="e.g. 60"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-100 outline-none focus:border-primary text-sm font-bold"
+                  value={formData.max_late_minutes}
+                  onChange={(e) => setFormData({...formData, max_late_minutes: Number(e.target.value)})}
+                />
+              </div>
+
+              <div>
+                <label className="text-subtitle mb-1 block font-semibold flex items-center gap-1">
+                  Absent Limit <span className="text-[10px] text-slate-400 font-normal">(Minutes)</span>
+                </label>
+                <input 
+                  type="number"
+                  placeholder="e.g. 180"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-100 outline-none focus:border-primary text-sm font-bold"
+                  value={formData.max_absent_minutes}
+                  onChange={(e) => setFormData({...formData, max_absent_minutes: Number(e.target.value)})}
+                />
+              </div>
             </div>
 
-            <div className="mt-8 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-              <p className="text-[12px] text-slate-500 leading-relaxed italic">
-                * Geofencing allows employees to give attendance only within the specified radius of the latitude and longitude.
+            <div className="mt-4 p-4 bg-primary/5 rounded-2xl border border-primary/10 space-y-1">
+              <p className="text-[11px] text-slate-600 leading-relaxed font-medium flex items-start gap-1">
+                <RiAlertLine size={14} className="text-primary mt-0.5 shrink-0" />
+                <span>নির্ধারিত লিমিটের পর প্রবেশ করলে অটোমেটিক <b>Half Day</b> অথবা <b>Absent</b> স্ট্যাটাস ক্যালকুলেট হবে।</span>
               </p>
             </div>
           </div>
