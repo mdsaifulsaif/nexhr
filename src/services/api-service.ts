@@ -116,20 +116,48 @@ export const attendanceService = {
 };
 
 
+export const leaveService = {
+  // ১. নির্দিষ্ট এমপ্লয়ির সব লিভ হিস্ট্রি নিয়ে আসা (ফিল্টার ও পেজিনেশনসহ)
+  getEmployeeLeaves: async (
+    employeeId: string,
+    params: {
+      status?: string;
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+    }
+  ) => {
+    const response = await apiClient.get(`/leave/${employeeId}`, { params });
+    return response.data;
+  },
+
+  // ২. নতুন ছুটির আবেদন করা
+  applyLeave: async (payload: {
+    leave_type: string;
+    start_date: string;
+    end_date: string;
+    reason: string;
+  }) => {
+    const response = await apiClient.post("/leave/apply", payload);
+    return response.data;
+  },
+};
 
 
 
 
 
-// ইউনিক অবজেক্ট নেম দিয়ে সবগুলো এপিআই একসাথে র্যাপ করা হলো
+
+
+
+// ইউনিক অবজেক্ট নেম দিয়ে সবগুলো এপিআই একসাথে র্যাপ করা হলো
 export const dashboardAttendanceService = {
-  // ১. Punch Check-In (Attendance Add)
+  // ১. Punch Check-In (শুধুমাত্র কোঅর্ডিনেট পাঠানো হচ্ছে)
   checkIn: async (
     data: {
-      employee_id: string;
       lat: number;
       lon: number;
-      office_id: number;
     },
     token?: string
   ) => {
@@ -138,13 +166,11 @@ export const dashboardAttendanceService = {
     return response.data;
   },
 
-  // ২. Punch Check-Out (Attendance Update)
+  // ২. Punch Check-Out (শুধুমাত্র কোঅর্ডিনেট পাঠানো হচ্ছে)
   checkOut: async (
     data: {
-      employee_id: string;
       lat: number;
       lon: number;
-      office_id: number;
     },
     token?: string
   ) => {

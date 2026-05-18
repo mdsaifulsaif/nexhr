@@ -32,8 +32,10 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }: SidebarProps) =
     { title: 'Office', icon: <RiCalendarLine />, href: '/office' },
     { title: 'Employee', icon: <RiMailLine />, href: '/employee' },
     { title: 'Attendance', icon: <RiLayoutGridLine />, href: '/attendance' },
+    { title: 'addAttendance', icon: <RiLayoutGridLine />, href: '/addAttendance' },
     { title: 'Notice', icon: <RiShieldUserLine />, href: '/notice' },
     { title: 'Leave', icon: <RiShieldUserLine />, href: '/leave' },
+    { title: 'My Leave', icon: <RiShieldUserLine />, href: '/myleave' },
     { type: 'label', label: 'COMPONENTS' },
     { title: 'UI Components', icon: <RiStackLine />, href: '/ui-components' },
   ];

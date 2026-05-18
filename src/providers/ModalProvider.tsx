@@ -3,6 +3,7 @@ import { useModalStore } from "@/store/useModalStore";
 import { AddDepartmentModal } from "@/components/modals/AddDepartmentModal";
 import { useEffect, useState } from "react";
 import { EmployeeModal } from "@/components/modals/EmployeeModal";
+import { ApplyLeaveModal } from "@/components/modals/ApplyLeaveModal";
 
 export const ModalProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -18,6 +19,7 @@ export const ModalProvider = () => {
   return (
     <>
      <EmployeeModal />
+     <ApplyLeaveModal />
       {isOpen && modalType === "addDepartment" && <AddDepartmentModal />}
     </>
   );
