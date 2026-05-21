@@ -233,3 +233,33 @@ export const dashboardAttendanceService = {
     return response.data;
   },
 };
+
+
+
+
+
+
+export const payrollService = {
+  // ১. সব জেনারেটেড পেরোল ডাটা আনা (ফিল্টার ও পেজিনেশনসহ)
+  getAllPayrolls: async (params: {
+    employeeId?: string;
+    month?: string;
+    page?: number;
+    limit?: number;
+  }) => {
+    const response = await apiClient.get("/payroll", { params });
+    return response.data;
+  },
+
+  // ২. নতুন পেরোল জেনারেট করা
+  generatePayroll: async (payload: { month: string; bonus?: number }) => {
+    const response = await apiClient.post("/payroll/generate", payload);
+    return response.data;
+  },
+
+  // ৩. স্যালারি পেইড করা (PATCH)
+  paySalary: async (id: string) => {
+    const response = await apiClient.patch(`/payroll/pay/${id}`);
+    return response.data;
+  },
+};
