@@ -148,6 +148,53 @@ export const leaveService = {
 
 
 
+export const dashboardNoticeService = {
+  // ১. Create Notice (নতুন নোটিশ তৈরি)
+  createNotice: async (
+    data: {
+      title: string;
+      content: string;
+      priority: string;
+      target_audience: string;
+    },
+    token?: string
+  ) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const response = await apiClient.post("/notice/create", data, config);
+    return response.data;
+  },
+
+  // ২. Get All Notices with Pagination & Filters
+  getAllNotices: async (
+    params: {
+      page: number;
+      limit: number;
+      searchTerm?: string;
+      date?: string;
+    },
+    token?: string
+  ) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    
+    // কুয়েরি স্ট্রিং তৈরি করা
+    const queryParams = new URLSearchParams({
+      page: params.page.toString(),
+      limit: params.limit.toString(),
+      ...(params.searchTerm && { searchTerm: params.searchTerm }),
+      ...(params.date && { date: params.date }),
+    }).toString();
+
+    const response = await apiClient.get(`/notice?${queryParams}`, config);
+    return response.data;
+  },
+
+  getNoticeById: async (id: string, token?: string) => {
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+    const response = await apiClient.get(`/notice/${id}`, config); // ব্যাকএন্ডে রাউট notices হলে
+    return response.data;
+  },
+};
+
 
 
 
