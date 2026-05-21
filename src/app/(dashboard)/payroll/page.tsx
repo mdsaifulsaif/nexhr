@@ -13,7 +13,8 @@ import {
   RiLoader2Line,
   RiSearchLine,
   RiArrowLeftSLine,
-  RiArrowRightSLine
+  RiArrowRightSLine,
+  RiPercentLine // 🎯 নতুন আইকন যুক্ত করা হলো পার্সেন্টেজের জন্য
 } from "react-icons/ri";
 
 export default function PayrollPage() {
@@ -35,7 +36,8 @@ export default function PayrollPage() {
   // ফর্ম স্টেট (পেরোল জেনারেশন)
   const [formMonth, setFormMonth] = useState("");
   const [showBonus, setShowBonus] = useState(false);
-  const [bonus, setBonus] = useState("");
+  const [bonusType, setBonusType] = useState<"fixed" | "percentage">("fixed"); // 🎯 নতুন স্টেট
+  const [bonusValue, setBonusValue] = useState(""); // 🎯 নাম পরিবর্তন করে ব্যাকএন্ডের সাথে মিলানো হলো
 
   // ডেইট কনভার্টার হেল্পার (e.g., "2026-05" -> "May 2026")
   const formatMonthString = (dateStr: string) => {
@@ -58,7 +60,7 @@ export default function PayrollPage() {
 
       const res = await payrollService.getAllPayrolls(params);
       if (res.success) {
-        setPayrolls(res.data);
+        setPayrolls(res.result || res.data); // ব্যাকএন্ডের 'result' এর সাথে সিঙ্ক রাখা হলো
         if (res.meta) {
           setMeta({
             totalData: res.meta.totalData,
@@ -74,19 +76,17 @@ export default function PayrollPage() {
     }
   };
 
-  // ফিল্টার বা পেজ চেঞ্জ হলে ডাটা রিলোড হবে
   useEffect(() => {
     fetchPayrolls();
   }, [currentPage, filterMonth]);
 
-  // সার্চ বাটনে ক্লিক করলে কাজ করবে
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setCurrentPage(1);
     fetchPayrolls();
   };
 
-  // ২. নতুন পেরোল জেনারেট করার হ্যান্ডলার
+  // ২. নতুন পেরোল জেনারেট করার হ্যান্ডলার (নতুন এপিআই লজিকসহ)
   const handleGeneratePayroll = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formMonth) {
@@ -95,16 +95,20 @@ export default function PayrollPage() {
 
     try {
       setGenerateLoading(true);
+      
+      // 🎯 নতুন ৩টি ডাইনামিক ফিল্ড ব্যাকএন্ডের মতো করে সাজানো হলো
       const payload = {
-        month: formatMonthString(formMonth), // ব্যাকএন্ডের জন্য "May 2026" ফরম্যাটে কনভার্ট করা হলো
-        bonus: showBonus && bonus ? parseFloat(bonus) : 0
+        month: formatMonthString(formMonth),
+        bonusType: showBonus ? bonusType : "fixed",
+        bonusValue: showBonus && bonusValue ? parseFloat(bonusValue) : 0
       };
 
       const res = await payrollService.generatePayroll(payload);
       if (res.success) {
         toast.success(res.message || "Payroll generated successfully! 🎉");
         setFormMonth("");
-        setBonus("");
+        setBonusValue("");
+        setBonusType("fixed");
         setShowBonus(false);
         setCurrentPage(1);
         fetchPayrolls();
@@ -166,19 +170,35 @@ export default function PayrollPage() {
             <span>Add Bonus?</span>
           </div>
 
-          {/* কন্ডিশনাল বোনাস ইনপুট */}
+          {/* 🌟 কন্ডিশনাল ডাইনামিক বোনাস টাইপ ড্রপডাউন ও ইনপুট */}
           {showBonus && (
-            <div className="relative animate-fade-in">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">৳</span>
-              <input
-                type="number"
-                placeholder="Amount"
-                value={bonus}
-                onChange={(e) => setBonus(e.target.value)}
-                className="pl-7 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-primary/20 w-28"
-                min="0"
-                required
-              />
+            <div className="flex items-center gap-2 animate-fade-in">
+              {/* বোনাস টাইপ সিলেক্টর */}
+              <select
+                value={bonusType}
+                onChange={(e) => setBonusType(e.target.value as "fixed" | "percentage")}
+                className="px-2 py-2 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-primary/20 text-slate-600 font-medium"
+              >
+                <option value="fixed">Fixed (৳)</option>
+                <option value="percentage">Percentage (%)</option>
+              </select>
+
+              {/* ডাইনামিক ইনপুট (৳ অথবা % আইকনসহ) */}
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
+                  {bonusType === "fixed" ? "৳" : <RiPercentLine size={12} />}
+                </span>
+                <input
+                  type="number"
+                  placeholder={bonusType === "fixed" ? "Amount" : "Rate %"}
+                  value={bonusValue}
+                  onChange={(e) => setBonusValue(e.target.value)}
+                  className="pl-7 pr-3 py-2 text-xs bg-white border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-primary/20 w-24"
+                  min="0"
+                  max={bonusType === "percentage" ? "100" : undefined} // পার্সেন্টেজ হলে সর্বোচ্চ ১০০
+                  required
+                />
+              </div>
             </div>
           )}
 
