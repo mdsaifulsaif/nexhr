@@ -69,10 +69,15 @@ export default function RootLayout({
 
   // ২. লাইভ সকেট কানেকশন ও রিয়েল-টাইม নোটিফিকেশন রিসিভ করা
   useEffect(() => {
-    const socket = io("http://127.0.0.1:3001", {
-      transports: ["websocket"],
-      upgrade: false,
-      forceNew: true,
+    const socketUrl =
+      process.env.NEXT_PUBLIC_SOCKET_URL ||
+      process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ||
+      "http://localhost:5001";
+
+    const socket = io(socketUrl, {
+      transports: ["websocket", "polling"],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
 
     if (socket.connected) {
@@ -82,6 +87,11 @@ export default function RootLayout({
     socket.on("connect", () => {
       setIsConnected(true);
       console.log("Connected to Socket Server! ID:", socket.id);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.warn("⚠️ Socket connection error:", err.message);
+      setIsConnected(false);
     });
 
     socket.on("disconnect", () => {
